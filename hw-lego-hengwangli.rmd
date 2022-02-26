@@ -70,3 +70,5 @@ lego_sales %>%
 ### Answer 3.
   **Among the most common theme of Lego sets purchased, the most common subtheme is:The Force Awakens**
 
+### QUESTION 4.
+   **Create a new variable called age_group and group the ages into the following categories: “18 and under”, “19 - 25”, “26 - 35”, “36 - 50”, “51 and over”.**
