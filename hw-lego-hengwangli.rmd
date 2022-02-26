@@ -1,0 +1,31 @@
+---
+title: "STA422_HW_02_2"
+author: "Hengwang Li"
+date: "2/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#install.packages("tidyverse ")
+#install.packages("remotes") 
+#install.packages("dsbox")
+```
+
+```{r}
+library(remotes)
+remotes::install_github("rstudio-education/dsbox")
+```
+
+
+```{r}
+library(tidyverse)
+library(dsbox)
+```
+```{r}
+lego_sales
+```
+
