@@ -1,0 +1,5 @@
+"0","lego_sales %>%"
+"0","  group_by(theme) %>%"
+"0","  summarise(count=n())  %>%"
+"0","  arrange(desc(count)) %>%"
+"0","  head(3)"

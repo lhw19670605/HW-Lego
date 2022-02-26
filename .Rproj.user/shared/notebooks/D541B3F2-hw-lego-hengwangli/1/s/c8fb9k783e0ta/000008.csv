@@ -1,0 +1,6 @@
+"0","lego_sales %>%"
+"0","  filter(theme==""Star Wars"") %>%"
+"0","  group_by(subtheme) %>%"
+"0","  summarise(count=n())  %>%"
+"0","  arrange(desc(count)) %>%"
+"0","  head(1)"

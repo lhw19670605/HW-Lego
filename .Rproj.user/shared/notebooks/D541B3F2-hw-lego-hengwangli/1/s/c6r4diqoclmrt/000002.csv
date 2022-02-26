@@ -1,0 +1,5 @@
+"0","library(remotes)"
+"0","remotes::install_github(""rstudio-education/dsbox"")"
+"2","Skipping install of 'dsbox' from a github remote, the SHA1 (c217459e) has not changed since last install.
+  Use `force = TRUE` to force installation
+"

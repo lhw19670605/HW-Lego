@@ -1,0 +1,177 @@
+---
+title: "HW-01-Hengwang Li"
+date: "2/2/2022"
+output: html_document
+editor_options: 
+chunk_output_type: inline
+---
+```{r pressure, echo=FALSE}
+#install.packages("openintro")
+#install.packages("ggimage")
+```
+
+```{r,echo=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(openintro)
+```
+
+
+### Question 1:
+   **According to the data dictionary, how many pets are included in this dataset?**
+
+### *Answer 1:*  
+   *There are `r nrow(seattlepets)` pets are included in this dataset.*
+
+### Question 2:  
+   **Again, according to the data dictionary, how many variables do we have for each pet?**
+
+### *Answer 2:*  
+   *There are `r ncol(seattlepets)` variables we have for each pet.*
+   
+
+### Question 3:
+   **What are the three most common pet names in Seattle? To do this you will need to count the frequencies of each pet name and display the results in descending order of frequency so that you can easily see the top three most popular names.**
+   
+```{r echo=TRUE}
+seattlepets %>%
+  filter(!is.na(animal_name)) %>%
+  group_by(animal_name) %>%
+  summarise(count=n())  %>%
+  arrange(desc(count))
+```
+
+### *Answer 3:*  
+   *The three most common pet names are 'Luky', 'Charlie', 'Luna'*
+   
+```{r echo=TRUE, message=FALSE}
+seattlepets %>%
+  filter(!is.na(species)) %>%
+  group_by(species,animal_name) %>%
+  summarise(count=n()) %>%
+  arrange(desc(count))
+```
+
+```{r echo=TRUE}
+seattlepets %>%
+  filter(!is.na(species)) %>%
+  group_by(species) %>%
+  summarise(count=n()) %>%
+  arrange(desc(count))
+```
+
+### Now please write your answer to explain why we didn’t see any cats previously.
+
+### *Answer:*
+   *Because the number of dogs is much larger than that of cats, many dogs with the same name are ranked first, and cats with the same name are smaller in number and ranked at the back*
+
+```{r echo=TRUE, message=FALSE}
+seattlepets %>%
+  filter(!is.na(species)) %>%
+  group_by(species,animal_name) %>%
+  summarise(count=n()) %>%
+  slice_max(order_by=count,n=5)
+```
+
+### Question 4.
+   **Based on the previous output we can easily identify the most common cat and dog names in Seattle, but the output is sorted by n (the frequencies) as opposed to being organized by the species. Modify the pipeline to arrange the results so that they’re arranged by species first, and then n. This means you will need to add one more step to the pipeline, and you have two options: arrange(species, n) or arrange(n,species). You should try both and decide which one organizes the output by species and then ranks the names in order of frequency for each species.**
+   
+```{r echo=TRUE, message=FALSE}
+seattlepets %>%
+  filter(!is.na(species)) %>%
+  group_by(species,animal_name) %>%
+  summarise(count=n()) %>%
+  arrange(species,count) %>%
+  slice_max(order_by=count,n=5)
+```
+
+```{r echo=TRUE, message=FALSE}
+seattlepets %>%
+  filter(!is.na(species)) %>%
+  group_by(species,animal_name) %>%
+  summarise(count=n()) %>%
+  arrange(count,species) %>%
+  slice_max(order_by=count,n=5)
+```
+
+### *Answer4:*
+   *Their outcome are same*
+
+
+    
+![](D:\\MasterCourse\\2022spring\\visual\\download.png)
+
+### Question 5.
+   **What names are more common for cats than dogs? The ones above the line or the ones below the line?**
+
+### *Answer5:*
+   *The more common name for cats than dogs are:'Lily' and 'Oliver',They are below the line.*
+
+### Question 6.
+   **Is the relationship between the two variables (proportion of cats with a given name and proportion of dogs with a given name) positive or negative? What does this mean in context of the data?**
+
+### *Answer6:*
+   *The relationship between the two variables is positive, it mean the name that people like to name their pets of dogs or cats has same trend'*
+
+### Question 7.
+   **Now create the same plot with your own code, you should properly label the plot the same way. I already prepared the dataframe for this plot comb_name_props and saved it to RDS file, which is the format for any R object. Check documentation here. You can download the file here, then use the code chunk below to load the object, note you want to move the downloaded file to your current working directory (use getwd() in console to find it out):**
+   
+### *Answer 7:*
+
+```{r}
+comb_name_props = readRDS("C:\\Users\\lhw19\\Downloads\\comb_name_props.RDS")
+ggplot(comb_name_props,aes(x=cat_prop , y=dog_prop)) +
+  geom_point(color='blue')+
+   geom_abline(intercept = 0,slope = 1,color='red',size=2)+
+  #geom_text(aes(label=animal_name),data=comb_name_props)+
+  #geom_label(aes(label=animal_name),data=comb_name_props)+
+  #ggrepel::geom_label_repel(aes(label=animal_name),comb_name_props)+
+  ggrepel::geom_text_repel(aes(label=animal_name),comb_name_props)+
+  ggimage::geom_emoji(
+      image = "1f436", aes(x = 0.003, y = 0.009), size = 0.1
+      ) +
+  ggimage::geom_emoji(
+      image = "1f431", aes(x = 0.009, y = 0.003), size = 0.1
+      )+
+  xlab('Proportion of cats')+
+  ylab('Proportion of dogs')+
+  labs(title='The proportion of same name of dogs and cats')+
+   coord_cartesian(xlim = c(0.002,0.010),ylim = c(0.002,0.010))
+  
+```
+
+### Question 8.
+   **Finally, you want to create two data frames, one is called cat_name_props which contains top 30 cat names, its count (column n), and proportion of the count cat_prop (count for each name divided by total counts for named cats), descending ordered by cat_prop: **
+
+### *Answer 8.*
+
+```{r echo=TRUE}
+Cat_spe <- seattlepets %>%
+  filter(species=='Cat',!is.na(animal_name)) %>%
+  select(species,animal_name) %>%
+  group_by(animal_name) %>%
+  summarise(
+     n=n()
+  )%>%
+  #arrange(desc(n)) %>%
+  mutate(species='Cat',cat_prop=n/sum(n)) %>%
+  select(species, animal_name, n ,cat_prop) %>%
+  arrange(desc(cat_prop))%>%
+  head(30)
+Cat_spe
+```
+
+```{r echo=TRUE, warning=FALSE}
+Dog_spe <- seattlepets %>%
+  filter(species=='Dog',!is.na(animal_name)) %>%
+  select(species,animal_name) %>%
+  group_by(animal_name) %>%
+  summarise(
+     n=n()
+  )%>%
+  #arrange(desc(n)) %>%
+  mutate(species='Dog',cat_prop=n/sum(n)) %>%
+  select(species, animal_name, n ,cat_prop) %>%
+  arrange(desc(cat_prop))%>%
+  head(30)
+Dog_spe
+```

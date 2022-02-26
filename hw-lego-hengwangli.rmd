@@ -29,16 +29,14 @@ library(dsbox)
 ```{r}
 lego_sales
 ```
-### QUESTION 1. 
-    **What are the three most common first names of purchasers?**
+
+### QUESTION 1.
+   **What are the three most common first names of purchasers?**
 
 ```{r}
 lego_sales %>%
-  group_by(first_name) %>%
-  summarise(count=n())  %>%
-  arrange(desc(count)) %>%
-  head(3)
-
+  count(first_name,sort=TRUE) %>%
+  top_n(3)
 ```
 ### Answer 1
   *The three most common first names of purchasers are: Jackson, Jacob, Joseph. *
@@ -48,13 +46,11 @@ lego_sales %>%
    
 ```{r}
 lego_sales %>%
-  group_by(theme) %>%
-  summarise(count=n())  %>%
-  arrange(desc(count)) %>%
-  head(3)
+  count(theme, sort=TRUE) %>%
+  top_n(3)
 ```
 ### Answer 2
-  *The three most common themes of Lego sets purchased are: Star Wars, Nexo Knights, Grae.*
+  *The three most common themes of Lego sets purchased are: Star Wars, Nexo Knights, Gear and Mixels.*
   
 ### QUESTION 3.
   **Among the most common theme of Lego sets purchased, what is the most common subtheme?**
@@ -62,13 +58,103 @@ lego_sales %>%
 ```{r}
 lego_sales %>%
   filter(theme=="Star Wars") %>%
-  group_by(subtheme) %>%
-  summarise(count=n())  %>%
-  arrange(desc(count)) %>%
-  head(1)
+  count(subtheme,sort=TRUE) %>%
+  top_n(1)
 ```
 ### Answer 3.
-  **Among the most common theme of Lego sets purchased, the most common subtheme is:The Force Awakens**
+  *Among the most common theme of Lego sets purchased, the most common subtheme is:The Force Awakens*
 
 ### QUESTION 4.
    **Create a new variable called age_group and group the ages into the following categories: “18 and under”, “19 - 25”, “26 - 35”, “36 - 50”, “51 and over”.**
+
+```{r}
+lego_age <- lego_sales %>% 
+  mutate(age_group = case_when(
+     age < 19 ~ "18 and under",
+     age >18 & age <26 ~ "19-25",
+     age >25 & age <36 ~ "26-35",
+     age >35 & age <51 ~ "36-50",
+     age >50 ~ "51 and over"
+     ))
+lego_age %>%
+  select(age,age_group)
+```
+### QUESTION 5.
+   **Which age group has purchased the highest number of Lego sets?**
+
+    
+```{r}
+lego_age %>%
+  group_by(age_group)%>%
+  summarise(numbers=sum(quantity)) %>%
+  arrange(desc(numbers)) %>%
+  print()
+```
+### Answer 5.
+  *36-50 age group has purchased the highest number of Lego sets.*
+
+### QUESTION 6.
+   **Which age group has spent the most money on Legos?**
+   
+
+```{r}
+lego_age %>%
+  group_by(age_group)%>%
+  summarise(price=sum(us_price)) %>%
+  arrange(desc(price)) %>%
+  print()
+```
+### Answer 6.
+  *36-50 age group has spent the most money on Legos.*
+
+### QUESTION 7.
+   **Which Lego theme has made the most money for Lego?**
+   
+
+```{r}
+lego_age %>%
+  group_by(theme)%>%
+  summarise(price=sum(us_price)) %>%
+  arrange(desc(price)) %>%
+  print()
+```
+
+### Answer 7.
+  *Star Wars Lego theme has made the most money for Lego.*
+
+### QUESTION 8.
+   **Which area code has spent the most money on Legos? In the US the area code is the first 3 digits of a phone number.**
+
+
+```{r}
+lego_age %>%
+  filter(!is.na(phone_number)) %>%
+  mutate(area_code=str_sub(phone_number,1,3))%>%
+  group_by(area_code)%>%
+  summarise(price=sum(us_price)) %>%
+  arrange(desc(price)) %>%
+  head(1)
+```
+
+### Answer 8.
+  *973 area code has spent the most money on Legos? In the US the area code is the first 3 digits of a phone number.*
+
+### QUESTION 9.
+   **Come up with a question you want to answer using these data, and write it down. Then, create a data visualization that answers the question, and explain how your visualization answers the question.**
+   
+   **Compare the numbers of purchased each age with age groups**
+   
+   
+
+```{r}
+lego_sales %>%
+  ggplot(aes(x=age))+
+  geom_bar()
+
+lego_age %>%
+  ggplot(aes(x=age_group))+
+  geom_bar()
+```
+
+### Answer 9.
+  *From the analysis according age group, we know 36~50 age group purchased the highest number of Lego sets, but from the graphic of bar, we know the age of purchased the highest number is between 25~40.*
