@@ -34,3 +34,7 @@ lego_sales
 # second time
 ```
 
+```{r}
+#the third times
+```
+
