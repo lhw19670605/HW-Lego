@@ -15,26 +15,58 @@ knitr::opts_chunk$set(echo = TRUE)
 #install.packages("dsbox")
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(remotes)
 remotes::install_github("rstudio-education/dsbox")
 ```
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(dsbox)
 ```
+
 ```{r}
 lego_sales
 ```
+### QUESTION 1. 
+    **What are the three most common first names of purchasers?**
 
 ```{r}
+lego_sales %>%
+  group_by(first_name) %>%
+  summarise(count=n())  %>%
+  arrange(desc(count)) %>%
+  head(3)
 
-# second time
 ```
+### Answer 1
+  *The three most common first names of purchasers are: Jackson, Jacob, Joseph. *
+  
+### QUESTION 2.
+   **What are the three most common themes of Lego sets purchased?**
+   
+```{r}
+lego_sales %>%
+  group_by(theme) %>%
+  summarise(count=n())  %>%
+  arrange(desc(count)) %>%
+  head(3)
+```
+### Answer 2
+  *The three most common themes of Lego sets purchased are: Star Wars, Nexo Knights, Grae.*
+  
+### QUESTION 3.
+  **Among the most common theme of Lego sets purchased, what is the most common subtheme?**
 
 ```{r}
-#the third times
+lego_sales %>%
+  filter(theme=="Star Wars") %>%
+  group_by(subtheme) %>%
+  summarise(count=n())  %>%
+  arrange(desc(count)) %>%
+  head(1)
 ```
+### Answer 3.
+  **Among the most common theme of Lego sets purchased, the most common subtheme is:The Force Awakens**
 
